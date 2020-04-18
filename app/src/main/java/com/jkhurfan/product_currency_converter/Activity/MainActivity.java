@@ -1,24 +1,33 @@
 package com.jkhurfan.product_currency_converter.Activity;
 
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.util.Log;
+import android.util.SparseArray;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
-import android.view.View;
-
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.jkhurfan.product_currency_converter.DB.DatabaseHelper;
 import com.jkhurfan.product_currency_converter.R;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
+
+import info.androidhive.barcode.BarcodeReader;
+
+public class MainActivity extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener {
+
+    BarcodeReader barcodeReader;
+    TextView barcodeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
+        barcodeText = findViewById(R.id.barcode);
 
         DatabaseHelper helper = new DatabaseHelper();
 //        final TextView text = findViewById(R.id.test);
@@ -48,9 +57,37 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("getProduct","The read failed: " + databaseError.getCode());
+                Log.e("getProduct", "The read failed: " + databaseError.getCode());
             }
         });
+
+        // get the barcode reader instance
+        barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_scanner);
     }
 
+    @Override
+    public void onScanned(Barcode barcode) {
+        barcodeReader.playBeep();
+        barcodeText.setText(barcode.displayValue);
+    }
+
+    @Override
+    public void onScannedMultiple(List<Barcode> barcodes) {
+
+    }
+
+    @Override
+    public void onBitmapScanned(SparseArray<Barcode> sparseArray) {
+
+    }
+
+    @Override
+    public void onScanError(String errorMessage) {
+        Toast.makeText(getApplicationContext(), "Error occurred while scanning " + errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCameraPermissionDenied() {
+        finish();
+    }
 }

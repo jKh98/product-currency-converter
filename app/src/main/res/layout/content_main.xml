@@ -8,10 +8,10 @@
     tools:context=".Activity.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <ScrollView
+<!--    <ScrollView-->
 
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent">
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="fill_parent">-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,16 +19,27 @@
             android:layout_gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/barcode"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                android:padding="@dimen/margin_small"
-                android:hint="@string/barcode"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size_medium" />
+                android:layout_height="400dp">
+            <fragment
+                android:id="@+id/barcode_scanner"
+                android:name="info.androidhive.barcode.BarcodeReader"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:auto_focus="true"
+                app:use_flash="false" />
 
+            <info.androidhive.barcode.ScannerOverlay
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#44000000"
+                app:line_color="#7323DC"
+                app:line_speed="6"
+                app:line_width="4"
+                app:square_height="300"
+                app:square_width="300"/>
+            </RelativeLayout>
 
             <Button
                 android:id="@+id/button_start_poll_session"
@@ -36,13 +47,25 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_small"
+                android:background="@color/colorPrimary"
                 android:text="@string/scan"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_size_small"
-                android:background="@color/colorPrimary"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/barcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:hint="@string/barcode"
+                android:padding="@dimen/margin_small"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_medium" />
+
+
         </LinearLayout>
-    </ScrollView>
+<!--    </ScrollView>-->
 
     <ProgressBar
         android:id="@+id/progress_bar"
