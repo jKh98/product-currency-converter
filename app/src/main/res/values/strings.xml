@@ -2,6 +2,14 @@
     <string name="app_name">product-currency -converter</string>
     <string name="add_new_product">Add New Product</string>
     <string name="scan">Scan</string>
-    <string name="barcode">barcode</string>
+    <string name="barcode">Barcode</string>
     <string name="title_activity_main2">MainActivity2</string>
+    <string name="get_price">Get Price</string>
+    <string name="add_product">Add Product</string>
+    <string name="usd_rate_label">USD rate</string>
+    <string name="profit_label">Profit</string>
+    <string name="name">Name</string>
+    <string name="cost_usd">Cost (USD)</string>
+    <string name="cost_lbp">Cost (LBP)</string>
+    <string name="selling_price_lbp">Selling Price (LBP)</string>
 </resources>

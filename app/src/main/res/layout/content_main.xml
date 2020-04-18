@@ -8,10 +8,10 @@
     tools:context=".Activity.MainActivity"
     tools:showIn="@layout/activity_main">
 
-<!--    <ScrollView-->
+    <ScrollView
 
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="fill_parent">-->
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,21 +37,9 @@
                 app:line_color="#7323DC"
                 app:line_speed="6"
                 app:line_width="4"
-                app:square_height="300"
-                app:square_width="300"/>
+                app:square_height="250"
+                app:square_width="250"/>
             </RelativeLayout>
-
-            <Button
-                android:id="@+id/button_start_poll_session"
-                style="?android:textAppearanceSmall"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                android:background="@color/colorPrimary"
-                android:text="@string/scan"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size_small"
-                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/barcode"
@@ -59,19 +47,39 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_small"
                 android:hint="@string/barcode"
+                android:editable="false"
+                android:background="@drawable/back"
+                android:textColorHint="@android:color/darker_gray"
                 android:padding="@dimen/margin_small"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size_medium" />
+                android:textSize="@dimen/text_size_medium"
+                tools:ignore="Deprecated" />
 
+            <Button
+                android:id="@+id/get_price_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@color/colorPrimary"
+                android:text="@string/get_price"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/add_new_product_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@color/colorPrimary"
+                android:text="@string/add_product"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold" />
 
         </LinearLayout>
-<!--    </ScrollView>-->
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="@dimen/margin_large"
-        android:layout_height="@dimen/margin_large"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
+    </ScrollView>
 
 </RelativeLayout>
