@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".Activity.MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <ScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/barcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:padding="@dimen/margin_small"
+                android:hint="@string/barcode"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_medium" />
+
+
+            <Button
+                android:id="@+id/button_start_poll_session"
+                style="?android:textAppearanceSmall"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:text="@string/scan"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_small"
+                android:background="@color/colorPrimary"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/margin_large"
+        android:layout_height="@dimen/margin_large"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+</RelativeLayout>

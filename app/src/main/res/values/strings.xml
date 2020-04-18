@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">product-currency -converter</string>
+    <string name="add_new_product">Add New Product</string>
+    <string name="scan">Scan</string>
+    <string name="barcode">barcode</string>
+    <string name="title_activity_main2">MainActivity2</string>
 </resources>

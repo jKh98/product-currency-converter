@@ -1,4 +1,4 @@
-package com.jkhurfan.product_currency_converter;
+package com.jkhurfan.product_currency_converter.DB;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
