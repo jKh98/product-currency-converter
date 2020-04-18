@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
@@ -103,12 +104,12 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         dialog.setTitle("Price Details");
         dialog.setContentView(R.layout.price_details_dialog);
 
-        final TextView name = findViewById(R.id.name);
-        final EditText costUSD = findViewById(R.id.cost_usd);
-        final EditText costLBP = findViewById(R.id.cost_lbp);
-        final EditText rateUSD = findViewById(R.id.usd_rate);
-        final EditText profit = findViewById(R.id.profit_rate);
-        final TextView priceLBP = findViewById(R.id.selling_price_lbp);
+        final TextView name = dialog.findViewById(R.id.name);
+        final EditText costUSD = dialog.findViewById(R.id.cost_usd);
+        final EditText costLBP = dialog.findViewById(R.id.cost_lbp);
+        final EditText rateUSD = dialog.findViewById(R.id.usd_rate);
+        final EditText profit = dialog.findViewById(R.id.profit_rate);
+        final TextView priceLBP = dialog.findViewById(R.id.selling_price_lbp);
 
         helper.getReference().addValueEventListener(new ValueEventListener() {
             @Override
@@ -176,14 +177,50 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         });
 
         dialog.show();
+        adjustDialogWidth(dialog);
+
     }
 
-    private void openNewProductDialog(String s) {
-        Dialog dialog = new Dialog(MainActivity.this);
+    private void openNewProductDialog(final String s) {
+        final Dialog dialog = new Dialog(MainActivity.this);
         dialog.setTitle("Price Details");
         dialog.setContentView(R.layout.new_product_dialog);
 
+        final TextView barcode = dialog.findViewById(R.id.barcode);
+        final TextView name = dialog.findViewById(R.id.name);
+        final EditText description = dialog.findViewById(R.id.description);
+        final EditText costUSD = dialog.findViewById(R.id.cost_usd);
+
+        barcode.setText(s);
+
+        Button saveBtn = dialog.findViewById(R.id.save);
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    if (name.getText() != null && description.getText() != null && costUSD.getText() != null) {
+                        Product product = new Product(
+                                s,
+                                name.getText().toString(),
+                                description.getText().toString(),
+                                Double.parseDouble(costUSD.getText().toString())
+                        );
+                        helper.addNewProduct(product);
+                        dialog.dismiss();
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        });
+
         dialog.show();
+//        adjustDialogWidth(dialog);
+
+    }
+
+    private void adjustDialogWidth(Dialog dialog) {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        dialog.getWindow().setLayout((6 * metrics.widthPixels) / 7, (4 * metrics.heightPixels) / 5);
     }
 
 }

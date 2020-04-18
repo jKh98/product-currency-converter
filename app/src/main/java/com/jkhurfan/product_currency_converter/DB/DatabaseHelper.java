@@ -18,10 +18,9 @@ public class DatabaseHelper {
         return mDatabase;
     }
 
-    public void addNewProduct(String barcode, String name, String description, double cost) {
-        Product product = new Product(barcode, name, description, cost);
+    public void addNewProduct(Product product) {
 
-        mDatabase.child(barcode).setValue(product);
+        mDatabase.child(product.getBarcode()).setValue(product);
     }
 
     public void updateProductName(String barcode, String name) {
