@@ -17,7 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
-            app:popupTheme="@style/PopupOverlay" />
+            app:popupTheme="@style/PopupOverlay">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/main_search_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:clickable="true"
+                android:focusable="true" />
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

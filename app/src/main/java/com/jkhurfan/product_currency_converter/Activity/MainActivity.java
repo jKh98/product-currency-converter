@@ -1,6 +1,9 @@
 package com.jkhurfan.product_currency_converter.Activity;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -8,18 +11,19 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cursoradapter.widget.CursorAdapter;
 
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +33,7 @@ import com.jkhurfan.product_currency_converter.DB.DatabaseHelper;
 import com.jkhurfan.product_currency_converter.DB.Product;
 import com.jkhurfan.product_currency_converter.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import info.androidhive.barcode.BarcodeReader;
@@ -39,9 +44,11 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
     TextView barcodeText;
     Button getPriceBtn, addProductBtn;
     DatabaseHelper helper;
-    private String valueDatabase;
-    private String refinedData;
-    private ListView listView;
+
+    private SearchView searchView;
+    private CursorAdapter mSuggestionAdapter;
+    private MatrixCursor mSearchCursor;
+    private ArrayList<Product> mSearchableList = new ArrayList<>();
 
 
     @Override
@@ -54,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         barcodeText = findViewById(R.id.barcode);
         getPriceBtn = findViewById(R.id.get_price_button);
         addProductBtn = findViewById(R.id.add_new_product_button);
+        searchView = findViewById(R.id.main_search_view);
 
         barcodeText.setText(" ");
         getPriceBtn.setOnClickListener(this);
@@ -61,6 +69,86 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         helper = new DatabaseHelper();
         // get the barcode reader instance
         barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_scanner);
+        initSearchView();
+    }
+
+    private void initSearchView() {
+
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Product> array = new ArrayList<>();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+
+                    Product product = ds.getValue(Product.class);
+                    array.add(product);
+
+                }
+
+                mSearchableList.addAll(array);
+
+                mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "description"});
+                mSuggestionAdapter = new CursorAdapter(MainActivity.this, mSearchCursor, false) {
+                    @Override
+                    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+                        return LayoutInflater.from(context).inflate(R.layout.view_search, parent, false);
+                    }
+
+                    @Override
+                    public void bindView(View view, Context context, Cursor cursor) {
+                        ((TextView) view.findViewById(R.id.searchable_name)).setText(cursor.getString(1));
+                    }
+                };
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+//                    Utils.hideKeyboardFrom(searchView.getContext(), searchView);
+                        searchView.clearFocus();
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "description"});
+                        for (int i = 0; i < mSearchableList.size(); i++) {
+                            if (mSearchableList.get(i).getName().toLowerCase().contains(s.toLowerCase())) {
+                                mSearchCursor.addRow(new String[]{String.valueOf(i + 1), String.valueOf(mSearchableList.get(i).getName()), String.valueOf(((Product) mSearchableList.get(i)).getDescription())});
+                            }
+                        }
+                        mSuggestionAdapter.swapCursor(mSearchCursor);
+                        return false;
+                    }
+                });
+
+                searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+                    @Override
+                    public boolean onSuggestionClick(int position) {
+                        mSearchCursor.moveToPosition(position);
+                        String name = mSearchCursor.getString(1);
+                        for (Object obj : mSearchableList) {
+                            if (((Product) obj).getName().contains(name)) {
+                                openPriceDialog(((Product) obj).getBarcode());
+                                break;
+                            }
+                        }
+                        searchView.clearFocus();
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onSuggestionSelect(int position) {
+                        return true;
+                    }
+                });
+                searchView.setSuggestionsAdapter(mSuggestionAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        helper.getReference().addListenerForSingleValueEvent(eventListener);
     }
 
     @Override
