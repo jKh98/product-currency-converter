@@ -58,65 +58,77 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginTop="@dimen/margin_medium"
         android:background="@drawable/back"
-        android:padding="@dimen/margin_medium"
-        android:layout_marginTop="@dimen/margin_medium">
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/cost_usd"
-        android:textColorHint="@color/colorPrimary">
+        android:orientation="vertical"
+        android:padding="@dimen/margin_medium">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/cost_usd"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:editable="false"
-            android:inputType="numberDecimal"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_size_medium"
-            tools:ignore="Deprecated" />
+            android:hint="@string/cost_usd"
+            android:textColorHint="@color/colorPrimary">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cost_usd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:inputType="numberDecimal"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_medium"
+                tools:ignore="Deprecated" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/cost_lbp"
-        android:textColorHint="@color/colorPrimary">
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/cost_lbp"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:editable="false"
-            android:inputType="numberDecimal"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_size_medium"
-            tools:ignore="Deprecated" />
+            android:hint="@string/cost_lbp"
+            android:textColorHint="@color/colorPrimary">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cost_lbp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:inputType="numberDecimal"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_medium"
+                tools:ignore="Deprecated" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/selling_price_lbp"
-        android:textColorHint="@color/colorPrimary">
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/selling_price_lbp"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_size_medium" />
+            android:hint="@string/selling_price_lbp"
+            android:textColorHint="@color/colorPrimary">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/selling_price_lbp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_medium" />
+
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
+
+    <Button
+        android:id="@+id/ok"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        android:background="@color/colorPrimary"
+        android:text="@string/ok"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/text_size_medium"
+        android:textStyle="bold"
+        />
 
 </LinearLayout>

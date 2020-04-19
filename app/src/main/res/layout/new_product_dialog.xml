@@ -79,15 +79,15 @@
 
     <Button
         android:id="@+id/save"
-        style="?android:textAppearanceSmall"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_small"
         android:background="@color/colorPrimary"
         android:text="@string/save"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/text_size_small"
-        android:textStyle="bold" />
+        android:textSize="@dimen/text_size_medium"
+        android:textStyle="bold"
+        />
 
 
 </LinearLayout>
