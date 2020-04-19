@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
                         mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "description"});
                         for (int i = 0; i < mSearchableList.size(); i++) {
                             if (mSearchableList.get(i).getName().toLowerCase().contains(s.toLowerCase())) {
-                                mSearchCursor.addRow(new String[]{String.valueOf(i + 1), String.valueOf(mSearchableList.get(i).getName()), String.valueOf(((Product) mSearchableList.get(i)).getDescription())});
+                                mSearchCursor.addRow(new String[]{String.valueOf(i + 1), String.valueOf(mSearchableList.get(i).getName()), String.valueOf(mSearchableList.get(i).getDescription())});
                             }
                         }
                         mSuggestionAdapter.swapCursor(mSearchCursor);
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         };
@@ -206,8 +206,6 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         final EditText rateUSD = dialog.findViewById(R.id.usd_rate);
         final EditText profit = dialog.findViewById(R.id.profit_rate);
         final TextView priceLBP = dialog.findViewById(R.id.selling_price_lbp);
-        profit.setText(String.valueOf(0));
-
 
         helper.getReference().addValueEventListener(new ValueEventListener() {
             @Override
@@ -216,6 +214,9 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
                 if (product != null) {
                     name.setText(product.getName());
                     costUSD.setText(String.valueOf(product.getCost()));
+                }
+                else{
+                    dialog.dismiss();
                 }
             }
 

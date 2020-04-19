@@ -128,7 +128,6 @@
         android:text="@string/ok"
         android:textColor="@android:color/black"
         android:textSize="@dimen/text_size_medium"
-        android:textStyle="bold"
-        />
+        android:textStyle="bold" />
 
 </LinearLayout>
