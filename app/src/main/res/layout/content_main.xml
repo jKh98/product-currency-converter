@@ -22,38 +22,43 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="400dp">
-            <fragment
-                android:id="@+id/barcode_scanner"
-                android:name="info.androidhive.barcode.BarcodeReader"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:auto_focus="true"
-                app:use_flash="false" />
 
-            <info.androidhive.barcode.ScannerOverlay
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#44000000"
-                app:line_color="#7323DC"
-                app:line_speed="6"
-                app:line_width="4"
-                app:square_height="250"
-                app:square_width="250"/>
+                <fragment
+                    android:id="@+id/barcode_scanner"
+                    android:name="info.androidhive.barcode.BarcodeReader"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:auto_focus="true"
+                    app:use_flash="false" />
+
+                <info.androidhive.barcode.ScannerOverlay
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#44000000"
+                    app:line_color="#7323DC"
+                    app:line_speed="6"
+                    app:line_width="4"
+                    app:square_height="250"
+                    app:square_width="250" />
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/barcode"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_small"
                 android:hint="@string/barcode"
-                android:editable="false"
-                android:background="@drawable/back"
-                android:textColorHint="@android:color/darker_gray"
-                android:padding="@dimen/margin_small"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size_medium"
-                tools:ignore="Deprecated" />
+                android:textColorHint="@color/colorPrimary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/barcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/barcode"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_size_large"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/get_price_button"

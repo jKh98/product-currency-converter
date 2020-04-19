@@ -8,160 +8,115 @@
     android:orientation="vertical"
     android:padding="@dimen/margin_medium">
 
-    <LinearLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:hint="@string/name"
+        android:textColorHint="@color/colorPrimary">
 
-        <TextView
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:editable="false"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/text_size_large"
+            android:textSize="@dimen/text_size_medium"
             tools:ignore="Deprecated" />
-    </LinearLayout>
 
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:orientation="horizontal">
+        android:hint="@string/usd_rate_label"
+        android:textColorHint="@color/colorPrimary">
 
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/text_size_medium"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginRight="@dimen/text_size_medium">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@id/usd_rate"
-                    android:text="@string/usd_rate_label"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/usd_rate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_size_medium" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@id/profit_rate"
-                    android:text="@string/profit_label"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/profit_rate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_size_medium" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/margin_medium"
-            android:layout_marginRight="@dimen/margin_medium"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@id/name"
-                    android:text="@string/cost_usd"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/cost_usd"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:editable="false"
-                    android:inputType="numberDecimal"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_size_medium"
-                    tools:ignore="Deprecated" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@id/cost_lbp"
-                    android:text="@string/cost_lbp"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/cost_lbp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:editable="false"
-                    android:inputType="numberDecimal"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_size_medium"
-                    tools:ignore="Deprecated" />
-            </LinearLayout>
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:orientation="vertical">
-
-        <TextView
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/usd_rate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:labelFor="@id/selling_price_lbp"
-            android:text="@string/selling_price_lbp"
-            android:textColor="@android:color/black" />
+            android:inputType="numberDecimal"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_medium" />
 
-        <EditText
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/profit_label"
+        android:textColorHint="@color/colorPrimary">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/profit_rate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_medium" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/back"
+        android:padding="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium">
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/cost_usd"
+        android:textColorHint="@color/colorPrimary">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/cost_usd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:editable="false"
+            android:inputType="numberDecimal"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_medium"
+            tools:ignore="Deprecated" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/cost_lbp"
+        android:textColorHint="@color/colorPrimary">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/cost_lbp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:editable="false"
+            android:inputType="numberDecimal"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_medium"
+            tools:ignore="Deprecated" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/selling_price_lbp"
+        android:textColorHint="@color/colorPrimary">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/selling_price_lbp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_size_medium" />
-    </LinearLayout>
 
+    </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
 </LinearLayout>
