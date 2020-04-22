@@ -36,16 +36,21 @@ import com.jkhurfan.product_currency_converter.R;
  * Use the {@link ProductViewFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProductViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+public class ProductViewFragment extends Fragment implements View.OnClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_EXCHANGE_RATE = "exchange_rate";
     private static final String ARG_BARCODE = "barcode";
-    boolean editingPrice = false, editingCostUSD = false, editingCostLBP = false, editingProfit = false;
-    ProgressBar progressBar;
+    private boolean editingPrice = false, editingCostUSD = false, editingCostLBP = false, editingProfit = false;
+    private TextView name;
+    private EditText description;
+    private EditText costUSD;
+    private EditText costLBP;
+    private EditText profit;
+    private TextView priceLBP;
+    private ProgressBar progressBar;
+    private DatabaseReference databaseReference;
 
 
-    // TODO: Rename and change types of parameters
     private Double exchangeRate;
     private String barcodeValue;
 
@@ -55,15 +60,6 @@ public class ProductViewFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BlankFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ProductViewFragment newInstance(double param1, String param2) {
         ProductViewFragment fragment = new ProductViewFragment();
         Bundle args = new Bundle();
@@ -79,6 +75,9 @@ public class ProductViewFragment extends Fragment {
         if (getArguments() != null) {
             exchangeRate = getArguments().getDouble(ARG_EXCHANGE_RATE);
             barcodeValue = getArguments().getString(ARG_BARCODE);
+        }
+        if (getActivity() != null) {
+            databaseReference = ((MainActivity) getActivity()).getDatabaseInstance();
         }
     }
 
@@ -113,6 +112,42 @@ public class ProductViewFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.save) {
+            try {
+                if (name.getText() != null && description.getText() != null && costUSD.getText() != null && profit.getText() != null) {
+                    Product product = new Product(
+                            barcodeValue,
+                            name.getText().toString(),
+                            description.getText().toString(),
+                            Double.parseDouble(costUSD.getText().toString()),
+                            Double.parseDouble(profit.getText().toString())
+                    );
+
+                    progressBar.setVisibility(View.VISIBLE);
+                    databaseReference.child("products").child(product.getBarcode()).setValue(product).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Product successfully updated!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    if (getActivity() != null) {
+                        getActivity().getSupportFragmentManager().popBackStackImmediate();
+                    }
+                }
+            } catch (Exception ignored) {
+                Toast.makeText(getContext(), "Error: Could not save product data!", Toast.LENGTH_SHORT).show();
+            }
+
+        } else if (view.getId() == R.id.cancel) {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().popBackStackImmediate();
+            }
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -131,191 +166,167 @@ public class ProductViewFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (getActivity() != null) {
-            final DatabaseReference databaseReference = ((MainActivity) getActivity()).getDatabaseInstance();
-            progressBar = view.findViewById(R.id.progress_bar);
-            progressBar.setVisibility(View.VISIBLE);
-            databaseReference.child("products").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        progressBar = view.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+        databaseReference.child("products").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    Product product = dataSnapshot.child(barcodeValue).getValue(Product.class);
-                    final double exchangeRateValue = exchangeRate;
-                    TextView barcode = view.findViewById(R.id.barcode);
-                    final TextView name = view.findViewById(R.id.name);
-                    final EditText description = view.findViewById(R.id.description);
-                    final EditText costUSD = view.findViewById(R.id.cost_usd);
-                    final EditText costLBP = view.findViewById(R.id.cost_lbp);
-                    final EditText profit = view.findViewById(R.id.profit_rate);
-                    final TextView priceLBP = view.findViewById(R.id.selling_price_lbp);
+                Product product = dataSnapshot.child(barcodeValue).getValue(Product.class);
+                TextView barcode = view.findViewById(R.id.barcode);
+                name = view.findViewById(R.id.name);
+                description = view.findViewById(R.id.description);
+                costUSD = view.findViewById(R.id.cost_usd);
+                costLBP = view.findViewById(R.id.cost_lbp);
+                profit = view.findViewById(R.id.profit_rate);
+                priceLBP = view.findViewById(R.id.selling_price_lbp);
 
-                    barcode.setText(barcodeValue);
+                barcode.setText(barcodeValue);
 
 
-                    if (product != null) {
-                        name.setText(product.getName());
-                        description.setText(product.getDescription());
-                        costUSD.setText(String.valueOf(product.getCost()));
-                        profit.setText(String.valueOf(product.getProfit()));
-                        costLBP.setText(String.valueOf(exchangeRateValue * product.getCost()));
-                        priceLBP.setText(String.valueOf(Math.round(exchangeRateValue * product.getCost() * ((100 + product.getProfit()) / 100))));
+                if (product != null) {
+                    name.setText(product.getName());
+                    description.setText(product.getDescription());
+                    costUSD.setText(String.valueOf(product.getCost()));
+                    profit.setText(String.valueOf(product.getProfit()));
+                    costLBP.setText(String.valueOf(exchangeRate * product.getCost()));
+                    priceLBP.setText(String.valueOf(Math.round(exchangeRate * product.getCost() * ((100 + product.getProfit()) / 100))));
+                }
+
+                setUpTextWatchers();
+
+                Button saveBtn = view.findViewById(R.id.save);
+                saveBtn.setOnClickListener(ProductViewFragment.this);
+                Button cancelBtn = view.findViewById(R.id.cancel);
+                cancelBtn.setOnClickListener(ProductViewFragment.this);
+
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("getProduct", "The read failed: " + databaseError.getCode());
+                view.findViewById(R.id.dialog_layout).setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Could not retrieve product.", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+    }
+
+    private void setUpTextWatchers() {
+        costUSD.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (!editingCostLBP && !editingProfit && !editingPrice) {
+                    editingCostUSD = true;
+                    if (editable.length() > 0) {
+                        costLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate));
+                        try {
+
+                            double profitValue = Double.valueOf(profit.getText().toString());
+                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate * profitValue));
+                        } catch (Exception ignored) {
+                        }
                     }
 
-                    profit.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable editable) {
-                            if (!editingCostLBP && !editingCostUSD && !editingPrice) {
-                                editingProfit = true;
-                                if (editable.length() > 0) {
-
-                                    double costLBPValue = Double.valueOf(costLBP.getText().toString());
-                                    priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * costLBPValue));
-                                }
-                                editingProfit = false;
-                            }
-                        }
-                    });
-                    costUSD.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable editable) {
-                            if (!editingCostLBP && !editingProfit && !editingPrice) {
-                                editingCostUSD = true;
-                                if (editable.length() > 0) {
-                                    costLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRateValue));
-                                    try {
-
-                                        double profitValue = Double.valueOf(profit.getText().toString());
-                                        priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRateValue * profitValue));
-                                    } catch (Exception ignored) {
-                                    }
-                                }
-
-
-                                editingCostUSD = false;
-                            }
-                        }
-                    });
-                    costLBP.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable editable) {
-                            if (!editingProfit && !editingCostUSD && !editingPrice) {
-                                editingCostLBP = true;
-                                if (editable.length() > 0) {
-                                    costUSD.setText(String.valueOf(Double.parseDouble(editable.toString()) / exchangeRateValue));
-                                    try {
-                                        double profitValue = Double.valueOf(profit.getText().toString());
-                                        priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * profitValue));
-                                    } catch (Exception ignored) {
-                                    }
-
-                                }
-                                editingCostLBP = false;
-                            }
-                        }
-                    });
-
-                    priceLBP.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable editable) {
-                            if (!editingProfit && !editingCostUSD && !editingPrice) {
-                                editingCostLBP = true;
-                                if (editable.length() > 0) {
-                                    try {
-                                        double costLBPValue = Double.valueOf(costLBP.getText().toString());
-                                        profit.setText(String.valueOf(Double.parseDouble(editable.toString()) / costLBPValue));
-                                    } catch (Exception ignored) {
-
-                                    }
-
-                                }
-                                editingCostLBP = false;
-                            }
-                        }
-                    });
-
-
-                    Button saveBtn = view.findViewById(R.id.save);
-                    saveBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            try {
-                                if (name.getText() != null && description.getText() != null && costUSD.getText() != null && profit.getText() != null) {
-                                    Product product = new Product(
-                                            barcodeValue,
-                                            name.getText().toString(),
-                                            description.getText().toString(),
-                                            Double.parseDouble(costUSD.getText().toString()),
-                                            Double.parseDouble(profit.getText().toString())
-                                    );
-
-                                    progressBar.setVisibility(View.VISIBLE);
-                                    databaseReference.child("products").child(product.getBarcode()).setValue(product).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            progressBar.setVisibility(View.GONE);
-                                            Toast.makeText(getContext(), "Product successfully updated", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    getActivity().getSupportFragmentManager().popBackStackImmediate();
-                                }
-                            } catch (Exception ignored) {
-                            }
-                        }
-                    });
-
-                    progressBar.setVisibility(View.GONE);
+                    editingCostUSD = false;
                 }
+            }
+        });
+        costLBP.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e("getProduct", "The read failed: " + databaseError.getCode());
-                    view.findViewById(R.id.dialog_layout).setVisibility(View.GONE);
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Could not retrieve product.", Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (!editingProfit && !editingCostUSD && !editingPrice) {
+                    editingCostLBP = true;
+                    if (editable.length() > 0) {
+                        costUSD.setText(String.valueOf(Double.parseDouble(editable.toString()) / exchangeRate));
+                        try {
+                            double profitValue = Double.valueOf(profit.getText().toString());
+                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * profitValue));
+                        } catch (Exception ignored) {
+                        }
+
+                    }
+                    editingCostLBP = false;
                 }
-            });
-        }
+            }
+        });
+        priceLBP.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (!editingProfit && !editingCostUSD && !editingPrice) {
+                    editingCostLBP = true;
+                    if (editable.length() > 0) {
+                        try {
+                            double costLBPValue = Double.valueOf(costLBP.getText().toString());
+                            profit.setText(String.valueOf(Double.parseDouble(editable.toString()) / costLBPValue));
+                        } catch (Exception ignored) {
+
+                        }
+
+                    }
+                    editingCostLBP = false;
+                }
+            }
+        });
+        profit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (!editingCostLBP && !editingCostUSD && !editingPrice) {
+                    editingProfit = true;
+                    if (editable.length() > 0) {
+
+                        double costLBPValue = Double.valueOf(costLBP.getText().toString());
+                        priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * costLBPValue));
+                    }
+                    editingProfit = false;
+                }
+            }
+        });
+
     }
 }

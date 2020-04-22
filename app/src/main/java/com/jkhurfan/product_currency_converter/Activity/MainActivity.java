@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jkhurfan.product_currency_converter.DB.Product;
+import com.jkhurfan.product_currency_converter.Fragment.ProductListFragment;
 import com.jkhurfan.product_currency_converter.Fragment.ProductViewFragment;
 import com.jkhurfan.product_currency_converter.R;
 
@@ -35,12 +36,13 @@ import java.util.List;
 
 import info.androidhive.barcode.BarcodeReader;
 
-public class MainActivity extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener, View.OnClickListener, ProductListFragment.OnListFragmentInteractionListener {
 
     BarcodeReader barcodeReader;
     TextView barcodeText;
     TextView exchangeRate;
     Button addProductBtn;
+    Button productsListBtn;
     Button saveRate;
     ProgressBar progressBar;
 
@@ -55,8 +57,6 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
     private DatabaseReference databaseInstance;
 
-    boolean editingPrice = false, editingCostUSD = false, editingCostLBP = false, editingProfit = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,16 +70,17 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         exchangeRate = findViewById(R.id.exchange_rate);
         saveRate = findViewById(R.id.save_currency);
         progressBar = findViewById(R.id.progress_bar);
-
+        productsListBtn = findViewById(R.id.products_list_button);
         barcodeText.setText(" ");
         addProductBtn.setOnClickListener(this);
         saveRate.setOnClickListener(this);
+        productsListBtn.setOnClickListener(this);
 
         databaseInstance = FirebaseDatabase.getInstance().getReference();
         // get the barcode reader instance
         barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_scanner);
         retrieveRate();
-        retrieveDBData();
+        retrieveSearchViewData();
     }
 
     private void retrieveRate() {
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         });
     }
 
-    private void retrieveDBData() {
+    private void retrieveSearchViewData() {
         progressBar.setVisibility(View.VISIBLE);
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
@@ -220,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         } else if (view.getId() == R.id.save_currency) {
             if (exchangeRate.getText() != null && !exchangeRate.getText().toString().equals(" "))
                 progressBar.setVisibility(View.VISIBLE);
-            databaseInstance.child("rate").setValue(Double.parseDouble(exchangeRate.getText().toString())).addOnSuccessListener(new OnSuccessListener<Void>() {
+            databaseInstance.child("rate").setValue(getExchnageRate()).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     progressBar.setVisibility(View.GONE);
@@ -228,7 +229,40 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
                 }
             });
+        } else if (view.getId() == R.id.products_list_button) {
+            openProductsListFragment();
         }
+    }
+
+    private void openProductsListFragment() {
+        progressBar.setVisibility(View.VISIBLE);
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Product> array = new ArrayList<>();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+
+                    Product product = ds.getValue(Product.class);
+                    array.add(product);
+
+                }
+//                getSupportFragmentManager().popBackStackImmediate();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .addToBackStack("ProductViewFragment")
+                        .add(R.id.content, ProductListFragment.newInstance(1, array, getExchnageRate()))
+                        .commit();
+                progressBar.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), "Could not retrieve all products", Toast.LENGTH_SHORT).show();
+            }
+        };
+        databaseInstance.child("products").addListenerForSingleValueEvent(eventListener);
     }
 
     private void openProductViewFragment(String barcode) {
@@ -236,7 +270,23 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         getSupportFragmentManager()
                 .beginTransaction()
                 .addToBackStack("ProductViewFragment")
-                .add(R.id.content, ProductViewFragment.newInstance(Double.parseDouble(exchangeRate.getText().toString()), barcode))
+                .add(R.id.content, ProductViewFragment.newInstance(getExchnageRate(), barcode))
                 .commit();
+    }
+
+    @Override
+    public void onListFragmentInteraction(Product item) {
+        openProductViewFragment(item.getBarcode());
+
+    }
+
+    double getExchnageRate() {
+        double rate = 0.0;
+        try {
+            rate = Double.parseDouble(exchangeRate.getText().toString());
+        } catch (Exception ignored) {
+
+        }
+        return rate;
     }
 }

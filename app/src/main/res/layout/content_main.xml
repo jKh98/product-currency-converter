@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="top"
             android:orientation="vertical">
 
             <LinearLayout
@@ -38,6 +38,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/exchange_rate_label"
+                        android:maxLines="1"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/text_size_large" />
 
@@ -78,8 +79,8 @@
                     app:line_color="#7323DC"
                     app:line_speed="6"
                     app:line_width="4"
-                    app:square_height="250"
-                    app:square_width="250" />
+                    app:square_height="300"
+                    app:square_width="300" />
             </RelativeLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -108,6 +109,18 @@
                 android:layout_margin="@dimen/margin_small"
                 android:background="@color/colorPrimary"
                 android:text="@string/add_product"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/products_list_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@color/colorPrimary"
+                android:text="@string/products_list"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_size_small"
                 android:textStyle="bold" />
