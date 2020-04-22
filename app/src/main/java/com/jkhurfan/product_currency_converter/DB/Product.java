@@ -13,16 +13,18 @@ public class Product {
     private String name;
     private String description;
     private double cost;
+    private double profit;
 
     public Product() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Product(String barcode, String name, String description, double cost) {
+    public Product(String barcode, String name, String description, double cost, double profit) {
         this.barcode = barcode;
         this.name = name;
         this.description = description;
         this.cost = cost;
+        this.profit = profit;
     }
 
     @Exclude
@@ -32,6 +34,7 @@ public class Product {
         result.put("name", name);
         result.put("description", description);
         result.put("cost", cost);
+        result.put("profit", profit);
 
         return result;
     }
@@ -66,5 +69,13 @@ public class Product {
 
     public void setCost(double cost) {
         this.cost = cost;
+    }
+
+    public double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(double profit) {
+        this.profit = profit;
     }
 }

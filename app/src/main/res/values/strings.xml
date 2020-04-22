@@ -6,7 +6,7 @@
     <string name="title_activity_main2">MainActivity2</string>
     <string name="get_price">Get Price</string>
     <string name="add_product">Add Product</string>
-    <string name="usd_rate_label">USD rate</string>
+    <string name="exchange_rate_label">Exchange Rate</string>
     <string name="profit_label">% Profit</string>
     <string name="name">Name</string>
     <string name="cost_usd">Cost (USD)</string>
@@ -14,4 +14,7 @@
     <string name="selling_price_lbp">Selling Price (LBP)</string>
     <string name="description">Description</string>
     <string name="save">save</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

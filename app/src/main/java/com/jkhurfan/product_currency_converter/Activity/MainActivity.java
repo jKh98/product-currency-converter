@@ -1,21 +1,15 @@
 package com.jkhurfan.product_currency_converter.Activity;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,12 +19,15 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cursoradapter.widget.CursorAdapter;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.jkhurfan.product_currency_converter.DB.DatabaseHelper;
 import com.jkhurfan.product_currency_converter.DB.Product;
+import com.jkhurfan.product_currency_converter.Fragment.ProductViewFragment;
 import com.jkhurfan.product_currency_converter.R;
 
 import java.util.ArrayList;
@@ -42,14 +39,23 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
     BarcodeReader barcodeReader;
     TextView barcodeText;
-    Button getPriceBtn, addProductBtn;
-    DatabaseHelper helper;
+    TextView exchangeRate;
+    Button addProductBtn;
+    Button saveRate;
+    ProgressBar progressBar;
 
     private SearchView searchView;
     private CursorAdapter mSuggestionAdapter;
     private MatrixCursor mSearchCursor;
     private ArrayList<Product> mSearchableList = new ArrayList<>();
 
+    public DatabaseReference getDatabaseInstance() {
+        return databaseInstance;
+    }
+
+    private DatabaseReference databaseInstance;
+
+    boolean editingPrice = false, editingCostUSD = false, editingCostLBP = false, editingProfit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,21 +65,42 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         setSupportActionBar(toolbar);
 
         barcodeText = findViewById(R.id.barcode);
-        getPriceBtn = findViewById(R.id.get_price_button);
         addProductBtn = findViewById(R.id.add_new_product_button);
         searchView = findViewById(R.id.main_search_view);
+        exchangeRate = findViewById(R.id.exchange_rate);
+        saveRate = findViewById(R.id.save_currency);
+        progressBar = findViewById(R.id.progress_bar);
 
         barcodeText.setText(" ");
-        getPriceBtn.setOnClickListener(this);
         addProductBtn.setOnClickListener(this);
-        helper = new DatabaseHelper();
+        saveRate.setOnClickListener(this);
+
+        databaseInstance = FirebaseDatabase.getInstance().getReference();
         // get the barcode reader instance
         barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_scanner);
-        initSearchView();
+        retrieveRate();
+        retrieveDBData();
     }
 
-    private void initSearchView() {
+    private void retrieveRate() {
+        progressBar.setVisibility(View.VISIBLE);
+        databaseInstance.child("rate").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                exchangeRate.setText(String.valueOf(dataSnapshot.getValue()));
+                progressBar.setVisibility(View.GONE);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), "Could not retrieve exchange rate", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void retrieveDBData() {
+        progressBar.setVisibility(View.VISIBLE);
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -127,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
                         String name = mSearchCursor.getString(1);
                         for (Object obj : mSearchableList) {
                             if (((Product) obj).getName().contains(name)) {
-                                openPriceDialog(((Product) obj).getBarcode());
+                                openProductViewFragment(((Product) obj).getBarcode());
                                 break;
                             }
                         }
@@ -141,20 +168,24 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
                     }
                 });
                 searchView.setSuggestionsAdapter(mSuggestionAdapter);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), "Could not retrieve all products", Toast.LENGTH_SHORT).show();
             }
         };
-        helper.getReference().addListenerForSingleValueEvent(eventListener);
+        databaseInstance.child("products").addListenerForSingleValueEvent(eventListener);
     }
 
     @Override
     public void onScanned(Barcode barcode) {
         barcodeReader.playBeep();
         barcodeText.setText(barcode.displayValue);
+        openProductViewFragment(barcode.displayValue);
+
     }
 
     @Override
@@ -180,155 +211,32 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
     @Override
     public void onClick(View view) {
 
-        CharSequence barcodeString = barcodeText.getText();
-        switch (view.getId()) {
-            case R.id.get_price_button:
-                if (barcodeString != null && !barcodeString.toString().equals("")) {
-                    openPriceDialog(barcodeString.toString());
+        CharSequence barcodeCS = barcodeText.getText();
+        if (view.getId() == R.id.add_new_product_button) {
+            if (barcodeCS != null && !barcodeCS.toString().equals("")) {
+                openProductViewFragment(barcodeCS.toString());
+
+            }
+        } else if (view.getId() == R.id.save_currency) {
+            if (exchangeRate.getText() != null && !exchangeRate.getText().toString().equals(" "))
+                progressBar.setVisibility(View.VISIBLE);
+            databaseInstance.child("rate").setValue(Double.parseDouble(exchangeRate.getText().toString())).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), "Currency successfully changed.", Toast.LENGTH_SHORT).show();
+
                 }
-                break;
-            case R.id.add_new_product_button:
-                if (barcodeString != null && !barcodeString.toString().equals("")) {
-                    openNewProductDialog(barcodeString.toString());
-                }
-                break;
+            });
         }
     }
 
-    private void openPriceDialog(final String s) {
-        final Dialog dialog = new Dialog(MainActivity.this);
-        dialog.setTitle("Price Details");
-        dialog.setContentView(R.layout.price_details_dialog);
-
-        final TextView name = dialog.findViewById(R.id.name);
-        final EditText costUSD = dialog.findViewById(R.id.cost_usd);
-        final EditText costLBP = dialog.findViewById(R.id.cost_lbp);
-        final EditText rateUSD = dialog.findViewById(R.id.usd_rate);
-        final EditText profit = dialog.findViewById(R.id.profit_rate);
-        final TextView priceLBP = dialog.findViewById(R.id.selling_price_lbp);
-
-        helper.getReference().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Product product = dataSnapshot.child(s).getValue(Product.class);
-                if (product != null) {
-                    name.setText(product.getName());
-                    costUSD.setText(String.valueOf(product.getCost()));
-                }
-                else{
-                    dialog.dismiss();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("getProduct", "The read failed: " + databaseError.getCode());
-                findViewById(R.id.dialog_layout).setVisibility(View.GONE);
-            }
-        });
-
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                try {
-                    double rateUSDValue = Double.parseDouble(rateUSD.getText().toString());
-                    double costUSDValue = Double.parseDouble(costUSD.getText().toString());
-                    double profitRateValue = Double.parseDouble(profit.getText().toString());
-                    costLBP.setText(String.valueOf(rateUSDValue * costUSDValue));
-                    priceLBP.setText(String.valueOf(Math.round(rateUSDValue * costUSDValue * ((100 + profitRateValue) / 100))));
-                } catch (Exception ignored) {
-                }
-
-            }
-        };
-
-        rateUSD.addTextChangedListener(textWatcher);
-        profit.addTextChangedListener(textWatcher);
-
-        Button okBtn = dialog.findViewById(R.id.ok);
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-        adjustDialogWidth(dialog);
-
+    private void openProductViewFragment(String barcode) {
+        getSupportFragmentManager().popBackStackImmediate();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .addToBackStack("ProductViewFragment")
+                .add(R.id.content, ProductViewFragment.newInstance(Double.parseDouble(exchangeRate.getText().toString()), barcode))
+                .commit();
     }
-
-    private void openNewProductDialog(final String s) {
-        final Dialog dialog = new Dialog(MainActivity.this);
-        dialog.setTitle("Price Details");
-        dialog.setContentView(R.layout.new_product_dialog);
-
-        final TextView barcode = dialog.findViewById(R.id.barcode);
-        final TextView name = dialog.findViewById(R.id.name);
-        final EditText description = dialog.findViewById(R.id.description);
-        final EditText costUSD = dialog.findViewById(R.id.cost_usd);
-
-        barcode.setText(s);
-        helper.getReference().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Product product = dataSnapshot.child(s).getValue(Product.class);
-                if (product != null) {
-                    name.setText(product.getName());
-                    description.setText(product.getDescription());
-                    costUSD.setText(String.valueOf(product.getCost()));
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("getProduct", "The read failed: " + databaseError.getCode());
-                findViewById(R.id.dialog_layout).setVisibility(View.GONE);
-            }
-        });
-
-
-        Button saveBtn = dialog.findViewById(R.id.save);
-        saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    if (name.getText() != null && description.getText() != null && costUSD.getText() != null) {
-                        Product product = new Product(
-                                s,
-                                name.getText().toString(),
-                                description.getText().toString(),
-                                Double.parseDouble(costUSD.getText().toString())
-                        );
-                        helper.addNewProduct(product);
-                        dialog.dismiss();
-                    }
-                } catch (Exception ignored) {
-                }
-            }
-        });
-
-        dialog.show();
-        adjustDialogWidth(dialog);
-
-    }
-
-    private void adjustDialogWidth(Dialog dialog) {
-//        DisplayMetrics metrics = getResources().getDisplayMetrics();
-//        dialog.getWindow().setLayout((6 * metrics.widthPixels) / 7, (4 * metrics.heightPixels) / 5);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-    }
-
-
 }
