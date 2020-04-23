@@ -1,4 +1,4 @@
-package com.jkhurfan.product_currency_converter.Fragment;
+package com.jkhurfan.product_currency_converter.fragment;
 
 import android.content.Context;
 import android.net.Uri;
@@ -24,24 +24,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.jkhurfan.product_currency_converter.Activity.MainActivity;
-import com.jkhurfan.product_currency_converter.DB.Product;
 import com.jkhurfan.product_currency_converter.R;
+import com.jkhurfan.product_currency_converter.activity.MainActivity;
+import com.jkhurfan.product_currency_converter.model.Product;
+import com.jkhurfan.product_currency_converter.util.Utils;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProductViewFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ProductViewFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ProductViewFragment extends Fragment implements View.OnClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_EXCHANGE_RATE = "exchange_rate";
     private static final String ARG_BARCODE = "barcode";
     private boolean editingPrice = false, editingCostUSD = false, editingCostLBP = false, editingProfit = false;
-    private TextView name;
+    private EditText barcode;
+    private EditText name;
     private EditText description;
     private EditText costUSD;
     private EditText costLBP;
@@ -115,29 +109,27 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.save) {
-            try {
-                if (name.getText() != null && description.getText() != null && costUSD.getText() != null && profit.getText() != null) {
-                    Product product = new Product(
-                            barcodeValue,
-                            name.getText().toString(),
-                            description.getText().toString(),
-                            Double.parseDouble(costUSD.getText().toString()),
-                            Double.parseDouble(profit.getText().toString())
-                    );
-
-                    progressBar.setVisibility(View.VISIBLE);
-                    databaseReference.child("products").child(product.getBarcode()).setValue(product).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Product successfully updated!", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.VISIBLE);
+            if (validateProductForm()) {
+                Product product = new Product(
+                        barcodeValue,
+                        name.getText().toString(),
+                        description.getText().toString(),
+                        Double.parseDouble(costUSD.getText().toString()),
+                        Double.parseDouble(profit.getText().toString())
+                );
+                databaseReference.child("products").child(product.getBarcode()).setValue(product).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(getContext(), "Product successfully updated!", Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null) {
+                            getActivity().getSupportFragmentManager().popBackStackImmediate();
                         }
-                    });
-                    if (getActivity() != null) {
-                        getActivity().getSupportFragmentManager().popBackStackImmediate();
                     }
-                }
-            } catch (Exception ignored) {
+                });
+            } else {
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Error: Could not save product data!", Toast.LENGTH_SHORT).show();
             }
 
@@ -147,6 +139,11 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
             }
         }
     }
+
+    private boolean validateProductForm() {
+        return Utils.validateField(barcode) && Utils.validateField(name) && Utils.validateField(description) && Utils.validateField(costUSD) && Utils.validateField(profit);
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -173,7 +170,7 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 Product product = dataSnapshot.child(barcodeValue).getValue(Product.class);
-                TextView barcode = view.findViewById(R.id.barcode);
+                barcode = view.findViewById(R.id.barcode);
                 name = view.findViewById(R.id.name);
                 description = view.findViewById(R.id.description);
                 costUSD = view.findViewById(R.id.cost_usd);
@@ -220,12 +217,10 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
         costUSD.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -233,9 +228,8 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
                 if (!editingCostLBP && !editingProfit && !editingPrice) {
                     editingCostUSD = true;
                     if (editable.length() > 0) {
-                        costLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate));
                         try {
-
+                            costLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate));
                             double profitValue = Double.valueOf(profit.getText().toString());
                             priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate * profitValue));
                         } catch (Exception ignored) {
@@ -263,8 +257,8 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
                 if (!editingProfit && !editingCostUSD && !editingPrice) {
                     editingCostLBP = true;
                     if (editable.length() > 0) {
-                        costUSD.setText(String.valueOf(Double.parseDouble(editable.toString()) / exchangeRate));
                         try {
+                            costUSD.setText(String.valueOf(Double.parseDouble(editable.toString()) / exchangeRate));
                             double profitValue = Double.valueOf(profit.getText().toString());
                             priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * profitValue));
                         } catch (Exception ignored) {
@@ -319,9 +313,12 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
                 if (!editingCostLBP && !editingCostUSD && !editingPrice) {
                     editingProfit = true;
                     if (editable.length() > 0) {
+                        try {
+                            double costLBPValue = Double.valueOf(costLBP.getText().toString());
+                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * costLBPValue));
+                        } catch (Exception ignored) {
 
-                        double costLBPValue = Double.valueOf(costLBP.getText().toString());
-                        priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * costLBPValue));
+                        }
                     }
                     editingProfit = false;
                 }
@@ -329,4 +326,12 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
         });
 
     }
+
+//    private Editable handleDouble(Editable editable) {
+//        if (editable.toString().substring(0, 1).equals(".")) {
+//            editable.insert(0, "0");
+//            editable.
+//    }
+//        return editable;
+//    }
 }

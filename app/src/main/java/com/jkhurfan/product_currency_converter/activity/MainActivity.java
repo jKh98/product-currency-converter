@@ -1,4 +1,4 @@
-package com.jkhurfan.product_currency_converter.Activity;
+package com.jkhurfan.product_currency_converter.activity;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,10 +27,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.jkhurfan.product_currency_converter.DB.Product;
-import com.jkhurfan.product_currency_converter.Fragment.ProductListFragment;
-import com.jkhurfan.product_currency_converter.Fragment.ProductViewFragment;
 import com.jkhurfan.product_currency_converter.R;
+import com.jkhurfan.product_currency_converter.fragment.ProductListFragment;
+import com.jkhurfan.product_currency_converter.fragment.ProductViewFragment;
+import com.jkhurfan.product_currency_converter.model.Product;
+import com.jkhurfan.product_currency_converter.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +41,8 @@ import info.androidhive.barcode.BarcodeReader;
 public class MainActivity extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener, View.OnClickListener, ProductListFragment.OnListFragmentInteractionListener {
 
     BarcodeReader barcodeReader;
-    TextView barcodeText;
-    TextView exchangeRate;
+    EditText barcodeText;
+    EditText exchangeRate;
     Button addProductBtn;
     Button productsListBtn;
     Button saveRate;
@@ -71,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         saveRate = findViewById(R.id.save_currency);
         progressBar = findViewById(R.id.progress_bar);
         productsListBtn = findViewById(R.id.products_list_button);
-        barcodeText.setText(" ");
         addProductBtn.setOnClickListener(this);
         saveRate.setOnClickListener(this);
         productsListBtn.setOnClickListener(this);
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String s) {
-//                    Utils.hideKeyboardFrom(searchView.getContext(), searchView);
+                        Utils.hideKeyboardFrom(searchView.getContext(), searchView);
                         searchView.clearFocus();
                         return true;
                     }
@@ -184,7 +185,9 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
     @Override
     public void onScanned(Barcode barcode) {
         barcodeReader.playBeep();
+        barcodeText.requestFocus();
         barcodeText.setText(barcode.displayValue);
+        Utils.hideKeyboardFrom(barcodeText.getContext(), barcodeText);
         openProductViewFragment(barcode.displayValue);
 
     }
@@ -212,14 +215,13 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
     @Override
     public void onClick(View view) {
 
-        CharSequence barcodeCS = barcodeText.getText();
         if (view.getId() == R.id.add_new_product_button) {
-            if (barcodeCS != null && !barcodeCS.toString().equals("")) {
-                openProductViewFragment(barcodeCS.toString());
+            if (Utils.validateField(barcodeText)) {
+                openProductViewFragment(barcodeText.getText().toString());
 
             }
         } else if (view.getId() == R.id.save_currency) {
-            if (exchangeRate.getText() != null && !exchangeRate.getText().toString().equals(" "))
+            if (Utils.validateField(exchangeRate))
                 progressBar.setVisibility(View.VISIBLE);
             databaseInstance.child("rate").setValue(getExchnageRate()).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override

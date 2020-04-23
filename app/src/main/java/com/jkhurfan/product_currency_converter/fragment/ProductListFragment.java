@@ -1,4 +1,4 @@
-package com.jkhurfan.product_currency_converter.Fragment;
+package com.jkhurfan.product_currency_converter.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.jkhurfan.product_currency_converter.Adapter.ProductRecyclerViewAdapter;
-import com.jkhurfan.product_currency_converter.DB.Product;
+import com.jkhurfan.product_currency_converter.adapter.ProductRecyclerViewAdapter;
+import com.jkhurfan.product_currency_converter.model.Product;
 import com.jkhurfan.product_currency_converter.R;
 
 import java.util.ArrayList;
