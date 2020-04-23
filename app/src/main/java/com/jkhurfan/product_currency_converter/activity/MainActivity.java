@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,8 +44,8 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
     BarcodeReader barcodeReader;
     EditText barcodeText;
     EditText exchangeRate;
-    Button addProductBtn;
-    Button productsListBtn;
+    ImageButton addProductBtn;
+    ImageButton productsListBtn;
     Button saveRate;
     ProgressBar progressBar;
 
@@ -63,8 +64,8 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         barcodeText = findViewById(R.id.barcode);
         addProductBtn = findViewById(R.id.add_new_product_button);
