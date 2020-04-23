@@ -276,11 +276,11 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (!editingProfit && !editingCostUSD && !editingPrice) {
+                if (!editingProfit && !editingCostUSD && !editingCostLBP) {
                     editingCostLBP = true;
                     if (editable.length() > 0) {
                         try {
-                            double costLBPValue = Double.valueOf(costLBP.getText().toString());
+                            double costLBPValue = Double.parseDouble(costLBP.getText().toString());
                             profit.setText(String.valueOf(Double.parseDouble(editable.toString()) / costLBPValue));
                         } catch (Exception ignored) {
 
@@ -308,7 +308,7 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
                     editingProfit = true;
                     if (editable.length() > 0) {
                         try {
-                            double costLBPValue = Double.valueOf(costLBP.getText().toString());
+                            double costLBPValue = Double.parseDouble(costLBP.getText().toString());
                             priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * costLBPValue));
                         } catch (Exception ignored) {
 
