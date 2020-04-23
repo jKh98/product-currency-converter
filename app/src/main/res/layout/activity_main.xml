@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,26 +11,50 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppBarOverlay">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
-            app:popupTheme="@style/PopupOverlay">
+
+            >
+
+            <!--        <androidx.appcompat.widget.Toolbar-->
+            <!--            android:id="@+id/toolbar"-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="?attr/actionBarSize"-->
+            <!--            android:background="@color/colorPrimary"-->
+
+            <!--            app:popupTheme="@style/PopupOverlay">-->
+
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/main_search_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentBottom="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity=""
                 android:clickable="true"
                 android:focusable="true" />
-        </androidx.appcompat.widget.Toolbar>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/products_list_button"
+                android:layout_width="@dimen/width_height_medium"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="end"
+                android:layout_margin="@dimen/margin_extra_small"
+                android:background="@drawable/baseline_list_24" />
+
+
+            <!--        </androidx.appcompat.widget.Toolbar>-->
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
 
-    <include android:id="@+id/content" layout="@layout/content_main" />
+    <include
+        android:id="@+id/content"
+        layout="@layout/content_main" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

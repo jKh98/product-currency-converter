@@ -38,7 +38,7 @@ import java.util.List;
 
 import info.androidhive.barcode.BarcodeReader;
 
-public class MainActivity extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener, View.OnClickListener, ProductListFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener, View.OnClickListener, ProductListFragment.OnListFragmentInteractionListener, ProductViewFragment.OnFragmentInteractionListener {
 
     BarcodeReader barcodeReader;
     EditText barcodeText;
@@ -116,16 +116,17 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
                 mSearchableList.addAll(array);
 
-                mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "description"});
+                mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "cost"});
                 mSuggestionAdapter = new CursorAdapter(MainActivity.this, mSearchCursor, false) {
                     @Override
                     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-                        return LayoutInflater.from(context).inflate(R.layout.view_search, parent, false);
+                        return LayoutInflater.from(context).inflate(R.layout.fragment_product, parent, false);
                     }
 
                     @Override
                     public void bindView(View view, Context context, Cursor cursor) {
-                        ((TextView) view.findViewById(R.id.searchable_name)).setText(cursor.getString(1));
+                        ((TextView) view.findViewById(R.id.product_name)).setText(cursor.getString(1));
+                        ((TextView) view.findViewById(R.id.product_cost)).setText(cursor.getString(2));
                     }
                 };
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -138,10 +139,10 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
                     @Override
                     public boolean onQueryTextChange(String s) {
-                        mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "description"});
+                        mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "cost"});
                         for (int i = 0; i < mSearchableList.size(); i++) {
                             if (mSearchableList.get(i).getName().toLowerCase().contains(s.toLowerCase())) {
-                                mSearchCursor.addRow(new String[]{String.valueOf(i + 1), String.valueOf(mSearchableList.get(i).getName()), String.valueOf(mSearchableList.get(i).getDescription())});
+                                mSearchCursor.addRow(new String[]{String.valueOf(i + 1), String.valueOf(mSearchableList.get(i).getName()), String.valueOf(mSearchableList.get(i).getCost() * getExchangeRate())});
                             }
                         }
                         mSuggestionAdapter.swapCursor(mSearchCursor);
@@ -185,11 +186,8 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
     @Override
     public void onScanned(Barcode barcode) {
         barcodeReader.playBeep();
-        barcodeText.requestFocus();
-        barcodeText.setText(barcode.displayValue);
-        Utils.hideKeyboardFrom(barcodeText.getContext(), barcodeText);
         openProductViewFragment(barcode.displayValue);
-
+        barcodeText.setText(barcode.displayValue);
     }
 
     @Override
@@ -223,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         } else if (view.getId() == R.id.save_currency) {
             if (Utils.validateField(exchangeRate))
                 progressBar.setVisibility(View.VISIBLE);
-            databaseInstance.child("rate").setValue(getExchnageRate()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            databaseInstance.child("rate").setValue(getExchangeRate()).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     progressBar.setVisibility(View.GONE);
@@ -238,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
     private void openProductsListFragment() {
         progressBar.setVisibility(View.VISIBLE);
+        barcodeReader.pauseScanning();
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -252,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
                 getSupportFragmentManager()
                         .beginTransaction()
                         .addToBackStack("ProductViewFragment")
-                        .add(R.id.content, ProductListFragment.newInstance(1, array, getExchnageRate()))
+                        .add(R.id.content, ProductListFragment.newInstance(1, array, getExchangeRate()))
                         .commit();
                 progressBar.setVisibility(View.GONE);
 
@@ -268,11 +267,11 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
     }
 
     private void openProductViewFragment(String barcode) {
-        getSupportFragmentManager().popBackStackImmediate();
+        barcodeReader.pauseScanning();
         getSupportFragmentManager()
                 .beginTransaction()
                 .addToBackStack("ProductViewFragment")
-                .add(R.id.content, ProductViewFragment.newInstance(getExchnageRate(), barcode))
+                .replace(R.id.content, ProductViewFragment.newInstance(getExchangeRate(), barcode))
                 .commit();
     }
 
@@ -282,7 +281,13 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
     }
 
-    double getExchnageRate() {
+
+    @Override
+    public void enableBarcodeFragment() {
+        barcodeReader.resumeScanning();
+    }
+
+    double getExchangeRate() {
         double rate = 0.0;
         try {
             rate = Double.parseDouble(exchangeRate.getText().toString());

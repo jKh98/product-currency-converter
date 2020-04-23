@@ -28,6 +28,7 @@
                     android:id="@+id/rateLabel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="@dimen/margin_small"
                     android:layout_weight="2"
                     android:hint="@string/exchange_rate_label"
@@ -40,7 +41,7 @@
                         android:hint="@string/exchange_rate_label"
                         android:maxLines="1"
                         android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_size_large" />
+                        android:textSize="@dimen/text_size_medium" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -49,6 +50,7 @@
                     style="?android:textAppearanceSmall"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="@dimen/margin_small"
                     android:layout_weight="1"
                     android:background="@color/colorPrimary"
@@ -60,9 +62,60 @@
 
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="2"
+                    android:hint="@string/barcode"
+                    android:textColorHint="@color/colorPrimary"
+                    app:hintAnimationEnabled="false"
+                    app:hintEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/barcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/barcode"
+                        android:maxLines="1"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_size_medium" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/add_new_product_button"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:text="@string/add_product"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="400dp">
+                android:layout_height="450dp"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/margin_small">
 
                 <fragment
                     android:id="@+id/barcode_scanner"
@@ -70,7 +123,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:auto_focus="true"
-                    app:use_flash="false" />
+                    app:use_flash="false"/>
 
                 <info.androidhive.barcode.ScannerOverlay
                     android:layout_width="match_parent"
@@ -83,47 +136,18 @@
                     app:square_width="300" />
             </RelativeLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                android:hint="@string/barcode"
-                android:textColorHint="@color/colorPrimary">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/barcode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/barcode"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_size_large" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <Button
-                android:id="@+id/add_new_product_button"
-                style="?android:textAppearanceSmall"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                android:background="@color/colorPrimary"
-                android:text="@string/add_product"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size_small"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/products_list_button"
-                style="?android:textAppearanceSmall"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                android:background="@color/colorPrimary"
-                android:text="@string/products_list"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size_small"
-                android:textStyle="bold" />
+<!--            <Button-->
+<!--                android:id="@+id/products_list_button"-->
+<!--                style="?android:textAppearanceSmall"-->
+<!--                android:layout_width="fill_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:layout_margin="@dimen/margin_small"-->
+<!--                android:background="@color/colorPrimary"-->
+<!--                android:text="@string/products_list"-->
+<!--                android:textColor="@android:color/black"-->
+<!--                android:textSize="@dimen/text_size_small"-->
+<!--                android:textStyle="bold" />-->
 
 
         </LinearLayout>

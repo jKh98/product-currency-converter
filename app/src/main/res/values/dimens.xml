@@ -10,7 +10,7 @@
     <dimen name="width_height_small">30dp</dimen>
     <dimen name="text_size_small">12sp</dimen>
     <dimen name="text_size_large">22sp</dimen>
-    <dimen name="width_height_medium">60dp</dimen>
+    <dimen name="width_height_medium">40dp</dimen>
     <dimen name="margin_extra_small">6dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>

@@ -93,11 +93,12 @@ public class ProductListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener.enableBarcodeFragment();
         mListener = null;
     }
 
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(Product item);
+        void enableBarcodeFragment();
     }
 }
