@@ -27,4 +27,6 @@ public class Utils {
         if (imm != null)
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+
 }

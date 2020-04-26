@@ -8,159 +8,133 @@
     tools:context=".activity.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <ScrollView
+    <include layout="@layout/layout_camera_preview" />
 
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:orientation="vertical">
+            android:layout_alignParentTop="true"
+            android:background="@android:color/white"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/rateLabel"
+                android:layout_width="@dimen/width_height_medium"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/rateLabel"
-                    android:layout_width="@dimen/width_height_medium"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/margin_small"
-                    android:layout_weight="2"
-                    android:hint="@string/exchange_rate_label"
-                    android:textColorHint="@color/colorPrimary">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/exchange_rate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/exchange_rate_label"
-                        android:maxLines="1"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_size_medium" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <Button
-                    android:id="@+id/save_currency"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/width_height_medium"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="@dimen/margin_small"
-                    android:layout_marginRight="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
-                    android:text="@string/save"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_size_small"
-                    android:textStyle="bold" />
-
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/black" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="6">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textField"
-                    android:layout_width="@dimen/width_height_medium"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/margin_small"
-                    android:layout_weight="4"
-                    android:hint="@string/barcode"
-                    android:textColorHint="@color/colorPrimary"
-                    app:hintAnimationEnabled="false"
-                    app:hintEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/barcode"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/barcode"
-                        android:maxLines="1"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_size_medium" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <ImageButton
-                    android:id="@+id/add_new_product_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/width_height_medium"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
-                    android:src="@drawable/baseline_library_add_white_18"
-                    android:text="@string/add_product"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_size_small"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="@dimen/width_height_medium"
-                    android:background="@android:color/white" />
-
-                <ImageButton
-                    android:id="@+id/products_list_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/width_height_medium"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="@dimen/margin_small"
-                    android:layout_marginRight="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
-                    android:text="@string/add_product"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_size_small"
-                    android:textStyle="bold"
-                    app:srcCompat="@drawable/baseline_list_24" />
-
-            </LinearLayout>
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="450dp"
                 android:layout_gravity="center"
-                android:layout_margin="@dimen/margin_small">
+                android:layout_margin="@dimen/margin_small"
+                android:layout_weight="2"
+                android:hint="@string/exchange_rate_label"
+                android:textColorHint="@color/colorPrimary">
 
-                <fragment
-                    android:id="@+id/barcode_scanner"
-                    android:name="info.androidhive.barcode.BarcodeReader"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/exchange_rate"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:auto_focus="true"
-                    app:use_flash="false" />
+                    android:layout_height="wrap_content"
+                    android:hint="@string/exchange_rate_label"
+                    android:maxLines="1"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_size_medium" />
 
-                <info.androidhive.barcode.ScannerOverlay
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#44000000"
-                    app:line_color="#7323DC"
-                    app:line_speed="6"
-                    app:line_width="4"
-                    app:square_height="300"
-                    app:square_width="300" />
-            </RelativeLayout>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/save_currency"
+                style="?android:textAppearanceSmall"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/width_height_medium"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:text="@string/save"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold" />
+
 
         </LinearLayout>
-    </ScrollView>
 
+        <!--        <View-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="1dp"-->
+        <!--            android:background="@android:color/black" />-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            android:orientation="horizontal"
+            android:weightSum="6">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textField"
+                android:layout_width="@dimen/width_height_medium"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/margin_small"
+                android:layout_weight="4"
+                android:hint="@string/barcode"
+                android:textColorHint="@color/colorPrimary"
+                app:hintAnimationEnabled="false"
+                app:hintEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/barcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/barcode"
+                    android:maxLines="1"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_size_medium" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/add_new_product_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/width_height_medium"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:src="@drawable/baseline_library_add_white_18"
+                android:text="@string/add_product"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="@dimen/width_height_medium"
+                android:background="@android:color/white" />
+
+            <ImageButton
+                android:id="@+id/products_list_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/width_height_medium"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:text="@string/add_product"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold"
+                app:srcCompat="@drawable/baseline_list_24" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
 </RelativeLayout>

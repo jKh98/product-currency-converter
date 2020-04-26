@@ -3,7 +3,6 @@ package com.jkhurfan.product_currency_converter.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -214,7 +213,7 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
                         try {
                             costLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate));
                             double profitValue = Double.parseDouble(profit.getText().toString());
-                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate * (100 + profitValue)/100));
+                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate * (100 + profitValue) / 100));
                         } catch (Exception ignored) {
                         }
                     }
@@ -243,7 +242,7 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
                         try {
                             costUSD.setText(String.valueOf(Double.parseDouble(editable.toString()) / exchangeRate));
                             double profitValue = Double.parseDouble(profit.getText().toString());
-                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * (100+profitValue)/100));
+                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * (100 + profitValue) / 100));
                         } catch (Exception ignored) {
                         }
 
@@ -281,24 +280,24 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
             }
         });
         profit.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                }
+            }
 
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                }
+            }
 
-                @Override
+            @Override
             public void afterTextChanged(Editable editable) {
                 if (!editingCostLBP && !editingCostUSD && !editingPrice) {
                     editingProfit = true;
                     if (editable.length() > 0) {
                         try {
                             double costLBPValue = Double.parseDouble(costLBP.getText().toString());
-                            priceLBP.setText(String.valueOf((100 + Double.parseDouble(editable.toString()) )* costLBPValue/100));
+                            priceLBP.setText(String.valueOf((100 + Double.parseDouble(editable.toString())) * costLBPValue / 100));
                         } catch (Exception ignored) {
 
                         }
@@ -307,15 +306,5 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
                 }
             }
         });
-
     }
-
-
-//    private Editable handleDouble(Editable editable) {
-//        if (editable.toString().substring(0, 1).equals(".")) {
-//            editable.insert(0, "0");
-//            editable.
-//    }
-//        return editable;
-//    }
 }
