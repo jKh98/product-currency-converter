@@ -3,6 +3,7 @@ package com.jkhurfan.product_currency_converter.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -135,22 +136,10 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
     }
 
     private boolean validateProductForm() {
-        return Utils.validateField(barcode) && Utils.validateField(name) && Utils.validateField(description) && Utils.validateField(costUSD) && Utils.validateField(profit);
+        return Utils.validateField(barcode) && Utils.validateField(name) && Utils.validateField(costUSD) && Utils.validateField(profit);
     }
 
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        //        void onFragmentInteraction(Uri uri);
         void enableBarcodeFragment();
     }
 
@@ -224,8 +213,8 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
                     if (editable.length() > 0) {
                         try {
                             costLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate));
-                            double profitValue = Double.valueOf(profit.getText().toString());
-                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate * profitValue));
+                            double profitValue = Double.parseDouble(profit.getText().toString());
+                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * exchangeRate * (100 + profitValue)/100));
                         } catch (Exception ignored) {
                         }
                     }
@@ -253,8 +242,8 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
                     if (editable.length() > 0) {
                         try {
                             costUSD.setText(String.valueOf(Double.parseDouble(editable.toString()) / exchangeRate));
-                            double profitValue = Double.valueOf(profit.getText().toString());
-                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * profitValue));
+                            double profitValue = Double.parseDouble(profit.getText().toString());
+                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * (100+profitValue)/100));
                         } catch (Exception ignored) {
                         }
 
@@ -292,24 +281,24 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
             }
         });
         profit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
+                }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
+                }
 
-            @Override
+                @Override
             public void afterTextChanged(Editable editable) {
                 if (!editingCostLBP && !editingCostUSD && !editingPrice) {
                     editingProfit = true;
                     if (editable.length() > 0) {
                         try {
                             double costLBPValue = Double.parseDouble(costLBP.getText().toString());
-                            priceLBP.setText(String.valueOf(Double.parseDouble(editable.toString()) * costLBPValue));
+                            priceLBP.setText(String.valueOf((100 + Double.parseDouble(editable.toString()) )* costLBPValue/100));
                         } catch (Exception ignored) {
 
                         }

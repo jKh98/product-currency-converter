@@ -18,7 +18,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.cursoradapter.widget.CursorAdapter;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -117,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
                 mSearchableList.addAll(array);
 
-                mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "cost"});
+                mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "description", "cost", "price"});
                 mSuggestionAdapter = new CursorAdapter(MainActivity.this, mSearchCursor, false) {
                     @Override
                     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -127,7 +126,9 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
                     @Override
                     public void bindView(View view, Context context, Cursor cursor) {
                         ((TextView) view.findViewById(R.id.product_name)).setText(cursor.getString(1));
-                        ((TextView) view.findViewById(R.id.product_cost)).setText(cursor.getString(2));
+                        ((TextView) view.findViewById(R.id.product_description)).setText(cursor.getString(2));
+                        ((TextView) view.findViewById(R.id.product_cost)).setText(cursor.getString(3));
+                        ((TextView) view.findViewById(R.id.product_price)).setText(cursor.getString(4));
                     }
                 };
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -140,10 +141,14 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
                     @Override
                     public boolean onQueryTextChange(String s) {
-                        mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "cost"});
+                        mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "description", "cost", "price"});
                         for (int i = 0; i < mSearchableList.size(); i++) {
                             if (mSearchableList.get(i).getName().toLowerCase().contains(s.toLowerCase())) {
-                                mSearchCursor.addRow(new String[]{String.valueOf(i + 1), String.valueOf(mSearchableList.get(i).getName()), String.valueOf(mSearchableList.get(i).getCost() * getExchangeRate())});
+                                mSearchCursor.addRow(new String[]{String.valueOf(i + 1),
+                                        mSearchableList.get(i).getName(),
+                                        mSearchableList.get(i).getDescription(),
+                                        String.valueOf(mSearchableList.get(i).getCost() * getExchangeRate()),
+                                        String.valueOf(mSearchableList.get(i).getCost() * (100 + mSearchableList.get(i).getProfit()) / 100 * getExchangeRate())});
                             }
                         }
                         mSuggestionAdapter.swapCursor(mSearchCursor);
