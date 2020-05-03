@@ -269,7 +269,7 @@ public class ProductViewFragment extends Fragment implements View.OnClickListene
                     if (editable.length() > 0) {
                         try {
                             double costLBPValue = Double.parseDouble(costLBP.getText().toString());
-                            profit.setText(String.valueOf(Double.parseDouble(editable.toString()) / costLBPValue));
+                            profit.setText((String.valueOf(Double.parseDouble(editable.toString()) * 100 / costLBPValue - 100)));
                         } catch (Exception ignored) {
 
                         }

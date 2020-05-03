@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_centerInParent="true"
     android:layout_margin="@dimen/margin_small"
     android:orientation="vertical">
 
@@ -23,8 +24,8 @@
         app:line_color="#7323DC"
         app:line_speed="6"
         app:line_width="4"
-        app:square_height="250"
-        app:square_width="350" />
+        app:square_height="300"
+        app:square_width="300" />
 
 
 </RelativeLayout>

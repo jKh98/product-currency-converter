@@ -22,10 +22,33 @@ public class Utils {
         return true;
     }
 
-    public static void hideKeyboardFrom(Context context, View view) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        if (imm != null)
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    public static void hideKeyboardFrom(final Context context, final View view) {
+        view.requestFocus();
+
+        view.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                InputMethodManager keyboard = (InputMethodManager)
+                        context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        },200);
+
+    }
+
+    public static void openKeyboardFrom(final Context context, final View view) {
+        view.requestFocus();
+
+        view.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                InputMethodManager keyboard = (InputMethodManager)
+                        context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.showSoftInput(view, 0);
+            }
+        },200);
     }
 
 

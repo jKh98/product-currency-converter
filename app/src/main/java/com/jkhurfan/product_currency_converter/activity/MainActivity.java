@@ -8,11 +8,11 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +35,8 @@ import com.jkhurfan.product_currency_converter.model.Product;
 import com.jkhurfan.product_currency_converter.util.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import info.androidhive.barcode.BarcodeReader;
@@ -80,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
         barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_scanner);
         retrieveRate();
         retrieveSearchViewData();
+
+        Utils.openKeyboardFrom(this, barcodeText);
+        Utils.hideKeyboardFrom(this, barcodeText);
     }
 
     private void retrieveRate() {
@@ -123,10 +128,10 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
                     @Override
                     public void bindView(View view, Context context, Cursor cursor) {
-                        ((TextView) view.findViewById(R.id.product_name)).setText(cursor.getString(1));
-                        ((TextView) view.findViewById(R.id.product_description)).setText(cursor.getString(2));
-                        ((TextView) view.findViewById(R.id.product_cost)).setText(cursor.getString(3));
-                        ((TextView) view.findViewById(R.id.product_price)).setText(cursor.getString(4));
+                        ((TextView) view.findViewById(R.id.product_name)).setText(cursor.getString(2));
+                        ((TextView) view.findViewById(R.id.product_description)).setText(cursor.getString(3));
+                        ((TextView) view.findViewById(R.id.product_cost)).setText(cursor.getString(4));
+                        ((TextView) view.findViewById(R.id.product_price)).setText(cursor.getString(5));
                     }
                 };
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -139,10 +144,12 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
 
                     @Override
                     public boolean onQueryTextChange(String s) {
-                        mSearchCursor = new MatrixCursor(new String[]{"_id", "name", "description", "cost", "price"});
+                        mSearchCursor = new MatrixCursor(new String[]{"_id", "barcode", "name", "description", "cost", "price"});
                         for (int i = 0; i < mSearchableList.size(); i++) {
-                            if (mSearchableList.get(i).getName().toLowerCase().contains(s.toLowerCase())) {
+                            String nameDescription = mSearchableList.get(i).getName().toLowerCase() + " " + mSearchableList.get(i).getDescription().toLowerCase();
+                            if (nameDescription.contains(s.trim().toLowerCase())) {
                                 mSearchCursor.addRow(new String[]{String.valueOf(i + 1),
+                                        mSearchableList.get(i).getBarcode(),
                                         mSearchableList.get(i).getName(),
                                         mSearchableList.get(i).getDescription(),
                                         String.valueOf(mSearchableList.get(i).getCost() * getExchangeRate()),
@@ -158,13 +165,7 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
                     @Override
                     public boolean onSuggestionClick(int position) {
                         mSearchCursor.moveToPosition(position);
-                        String name = mSearchCursor.getString(1);
-                        for (Object obj : mSearchableList) {
-                            if (((Product) obj).getName().contains(name)) {
-                                openProductViewFragment(((Product) obj).getBarcode());
-                                break;
-                            }
-                        }
+                        openProductViewFragment(mSearchCursor.getString(1));
                         searchView.clearFocus();
                         return false;
                     }
@@ -251,6 +252,14 @@ public class MainActivity extends AppCompatActivity implements BarcodeReader.Bar
                     array.add(product);
 
                 }
+
+                Collections.sort(array, new Comparator<Product>() {
+                    @Override
+                    public int compare(Product product, Product t1) {
+                        return product.getName().compareTo(t1.getName());
+                    }
+                });
+
 //                getSupportFragmentManager().popBackStackImmediate();
                 getSupportFragmentManager()
                         .beginTransaction()
